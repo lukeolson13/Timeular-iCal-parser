@@ -1,6 +1,6 @@
 Instructions:
 1. Timeular:
-	- Go to timeular (app) profile [link: https://profile.timeular.com/#/login]
+	- Go to [timeular (app) profile](https://profile.timeular.com/#/login)
 	- On 'Integrations', download the iCal version of your logged hours
 2. Script:
 	- Download or copy/paste timeular_ical_parser.py from this repo
