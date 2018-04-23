@@ -7,6 +7,12 @@ __author__ = 'Luke Olson'
 
 from datetime import datetime, timedelta
 import pandas as pd
+from sys import argv
+
+def get_dates():
+	start = input('Enter a start date, or skip for all (MM/DD/YYYY): ')
+	end = input('Enter an end date, or skip for all (MM/DD/YYYY): ')
+	return start, end
 
 def ical_date_parse(ical_date_time, time_diff):
 	'''
@@ -64,9 +70,10 @@ def parse_ical(ical_file, time_diff, start, end):
 
 			elif split[0] == 'DTSTART':
 			    begin_date_time, begin_date, begin_time = ical_date_parse(split[1], time_diff)
-			    if get_date(begin_date) < start:
-			    	skip = True
-			    	continue
+			    if start:
+				    if get_date(begin_date) < start:
+				    	skip = True
+				    	continue
 			    dic['start day'] = begin_date
 			    dic['start time'] = begin_time
 
@@ -78,9 +85,10 @@ def parse_ical(ical_file, time_diff, start, end):
 
 			elif split[0] == 'DTEND':
 			    end_date_time, end_date, end_time = ical_date_parse(split[1], time_diff)
-			    if get_date(end_date) > end:
-			    	skip = True
-			    	continue
+			    if end:
+			    	if get_date(end_date) > end:
+				    	skip = True
+				    	continue
 			    diff = (end_date_time - begin_date_time).seconds / 60 / 60
 			    dic['end time'] = end_time
 			    dic['hours'] = round(diff, 3)
@@ -100,16 +108,16 @@ def export_to_csv(df, output_file):
 	df.to_csv(output_file, index=False)
 	print('Success! Check the file location: {}'.format(output_file))
 
-def main(ical_file, output_file, time_diff=0, start_date=None, end_date=None):
+def main(time_diff=0):
 	'''
 	Execute above functions
 	Inputs:
-		ical_file - location and name of ical file
-		output-file - location and name of output file
 		time_diff - difference in time between your time zone and UTC
-		start_date - first day to include in output
-		end_date - last day to include in output
 	'''
+	ical_file = argv[1]
+	output_file = argv[2]
+
+	start_date, end_date = get_dates()
 	if start_date:
 		start_date = get_date(start_date)
 	if end_date:
@@ -120,14 +128,8 @@ def main(ical_file, output_file, time_diff=0, start_date=None, end_date=None):
 	export_to_csv(df, output_file)
 
 if __name__ == '__main__':
-	# Required inputs:
-	ical_file = 'ical/calendar_4-18.ics'
-	output_file = 'excel/calendar_4-13.csv'
-
-	# Optional inputs:
+	# Optional input:
 	time_diff = -6
-	start_date = '03/31/2018'
-	end_date = '04/13/2018'
 
 	# Run functions (don't edit)
-	main(ical_file, output_file, time_diff, start_date, end_date)
+	main(time_diff)
