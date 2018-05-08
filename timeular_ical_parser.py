@@ -58,7 +58,7 @@ def get_dt_dates(start_in, end_in):
 		start_out = None
 
 	if end_in:
-		end_out = get_date(end_out)
+		end_out = get_date(end_in)
 	else:
 		end_out = None
 
