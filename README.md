@@ -7,7 +7,6 @@ Instructions:
 	- Open in text editor, and edit the input_url, output_folder, and time difference field below "if '__name__' == '__main__':"
 		- Paste the ical URL in the "input_url" field
 		- Add a folder location where you want your generated file to end up, or leave blank to have it generate wherever you run the script from
-		- You'll need to look up the time difference between yourself and UTC. For example, I'm MST, which is (currently) 6 hours behind, hence the "-6"
 	- Run from command line (make sure you're using python 3): 'python tiemular_ical_parser.py'
 	- Add optional start and end dates:
 		- Date inputs take time change into account

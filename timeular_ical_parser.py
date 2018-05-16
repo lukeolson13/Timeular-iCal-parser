@@ -11,6 +11,11 @@ import requests
 from sys import argv
 
 def get_string_dates():
+	'''
+	Ask for user input on range of dates to get
+	Returns:
+		String dates for start and end, or None if not specified
+	'''
 	start = input('Enter a start date, or skip for all (MM-DD-YYYY): ')
 	end = input('Enter an end date, or skip for all (MM-DD-YYYY): ')
 	return start, end
@@ -65,16 +70,34 @@ def get_dt_dates(start_in, end_in):
 	return start_out, end_out
 
 def get_entries(ical_url):
+	'''
+	Get iCal data from URL
+	Inputs:
+		ical_url - iCal URL found in Timeular profile
+	Returns:
+		Data from iCal
+	'''
 	data = requests.get(ical_url)
 	decoded = data.content.decode('utf-8')
 	return decoded.split('\r\n')
 
-def parse_ical(ical_url, time_diff, start, end):
+def get_time_diff():
+	'''
+	Determine difference in time between local timezone (of system running
+		script) and UTC (timezone of iCal)
+	Returns:
+		Difference (in hours) between local time and UTC
+	'''
+	local = datetime.now()
+	utc = datetime.utcnow()
+	diff = (local - utc).days * 24 + round((local - utc).seconds, -1) / 3600
+	return int(diff)
+
+def parse_ical(ical_url, start, end):
 	'''
 	Create pandas dataframe from parsed ical Timeular entries
 	Inputs:
 		ical_url - URL of ical file containing Timeular entries
-		time_diff - difference in time between your time zone and UTC
 		start - first day to include in output
 		end - last day to include in output
 	Returns:
@@ -83,6 +106,8 @@ def parse_ical(ical_url, time_diff, start, end):
 	df = pd.DataFrame(columns=['start day', 'start time', 'end time', 'hours', 'summary', 'description'])
 
 	entry_list = get_entries(ical_url)
+
+	time_diff = get_time_diff()
 
 	skip = False
 	for line in entry_list:
@@ -151,20 +176,19 @@ def export_to_csv(df, output_file):
 	df.to_csv(output_file, index=False)
 	print('Success! Check the file location: {}'.format(output_file))
 
-def main(ical_url, output_folder, time_diff=0):
+def main(ical_url, output_folder):
 	'''
 	Execute above functions
 	Inputs:
 		ical_url - URL of ical file containing Timeular entries
 		output_folder - folder location to output CSV to
-		time_diff - difference in time between your time zone and UTC
 	'''
 	start, end = get_string_dates()
 	start_date, end_date = get_dt_dates(start, end)
 
 	output_file = get_output_file(output_folder, start, end)
 
-	df = parse_ical(ical_url, time_diff, start_date, end_date)
+	df = parse_ical(ical_url, start_date, end_date)
 	# can manipulate pandas dataframe here if needed
 	export_to_csv(df, output_file)
 
@@ -173,8 +197,5 @@ if __name__ == '__main__':
 	ical_url = 'https://thirdparty.timeular.com/api/ical/480c0f598f55defd6a8b8e0702c8ddbcd1b1757549840297d7a2fc75880d35fe/calendar.ics'
 	output_folder = '../../hours/excel/'
 
-	# Optional input:
-	time_diff = -6
-
 	# Run functions (don't edit)
-	main(ical_url, output_folder, time_diff)
+	main(ical_url, output_folder)
