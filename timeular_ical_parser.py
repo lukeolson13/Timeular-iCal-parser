@@ -154,6 +154,19 @@ def parse_ical(ical_url, start, end):
 	return df.sort_values(['start day', 'start time'])
 
 def get_output_file(output_folder, start_date, end_date):
+	'''
+	Create full file path, including file name. Output depends on date inputs
+	Inputs:
+		output_folder - folder to create file in (relative to current
+			directory where script is being run)
+		start_date - user input on date to begin with
+		end_date - user input on date to end with
+	Returns:
+		Full file path
+	'''
+	if output_folder[-1] != '/':
+		output_folder += '/'
+
 	if start_date:
 		start_out = start_date
 	else:
@@ -186,16 +199,21 @@ def main(ical_url, output_folder):
 	start, end = get_string_dates()
 	start_date, end_date = get_dt_dates(start, end)
 
-	output_file = get_output_file(output_folder, start, end)
-
 	df = parse_ical(ical_url, start_date, end_date)
+	tot_hours = sum(df['hours'].values)
+	print('Total hours during this period: {}'.format(round(tot_hours, 3)))
 	# can manipulate pandas dataframe here if needed
-	export_to_csv(df, output_file)
+
+	if output_folder:
+		output_file = get_output_file(output_folder, start, end)
+		export_to_csv(df, output_file)
 
 if __name__ == '__main__':
 	# Required input:
 	ical_url = 'https://thirdparty.timeular.com/api/ical/480c0f598f55defd6a8b8e0702c8ddbcd1b1757549840297d7a2fc75880d35fe/calendar.ics'
-	output_folder = '../../hours/excel/'
+
+	# Optional inputs:
+	output_folder = '../../hours/excel'
 
 	# Run functions (don't edit)
 	main(ical_url, output_folder)
