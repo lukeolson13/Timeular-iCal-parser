@@ -1,3 +1,5 @@
+This script is meant to create a CSV output of time logged within the Timeular app. Currently, there is no way to do this without downloading the desktop app, which is only available for Windows and Mac. This allows anyone with Python and an internet connection to easily genenerate an output file (meant to be opened in Excel or similar) with their tracked hours over a set interval of time.
+
 Instructions:
 1. Timeular:
 	- Go to [timeular (app) profile](https://profile.timeular.com/#/login)

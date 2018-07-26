@@ -210,7 +210,7 @@ def main(ical_url, output_folder):
 
 if __name__ == '__main__':
 	# Required input:
-	ical_url = 'https://thirdparty.timeular.com/api/ical/480c0f598f55defd6a8b8e0702c8ddbcd1b1757549840297d7a2fc75880d35fe/calendar.ics'
+	ical_url = <insert iCal URL here>
 
 	# Optional inputs:
 	output_folder = '../../hours/excel'
